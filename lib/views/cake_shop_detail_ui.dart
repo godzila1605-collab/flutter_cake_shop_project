@@ -1,9 +1,11 @@
-// ignore_for_file: unused_element, sort_child_properties_last, unused_label, must_be_immutable
+// ignore_for_file: sized_box_for_whitespace, unused_import, unused_element, sort_child_properties_last, unused_label, must_be_immutable
 
 import 'package:flutter/material.dart';
 import 'package:flutter_cake_shop_project/models/cake_shop.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:url_launcher/url_launcher.dart';
+import 'package:latlong2/latlong.dart';
+import 'package:flutter_map/flutter_map.dart';
 
 class CakeShopDetailUI extends StatefulWidget {
   //สร้างตัวแปรรับค่าข้อมูลร้านจากหน้า shop_list_ui
@@ -98,7 +100,7 @@ class _CakeShopDetailUIState extends State<CakeShopDetailUI> {
                   ],
                 ),
                 SizedBox(
-                  height: MediaQuery.of(context).size.height * 0.03,
+                  height: MediaQuery.of(context).size.height * 0.02,
                 ),
                 //แสดงชื่อร้าน
                 Align(
@@ -121,7 +123,7 @@ class _CakeShopDetailUIState extends State<CakeShopDetailUI> {
                   ),
                 ),
                 SizedBox(
-                  height: MediaQuery.of(context).size.height * 0.03,
+                  height: MediaQuery.of(context).size.height * 0.02,
                 ),
                 //แสดงเวลาเปิด-ปิด
                 Align(
@@ -144,7 +146,7 @@ class _CakeShopDetailUIState extends State<CakeShopDetailUI> {
                   ),
                 ),
                 SizedBox(
-                  height: MediaQuery.of(context).size.height * 0.03,
+                  height: MediaQuery.of(context).size.height * 0.02,
                 ),
                 //แสดง รายละเอียดของร้าน
                 Align(
@@ -167,13 +169,13 @@ class _CakeShopDetailUIState extends State<CakeShopDetailUI> {
                   ),
                 ),
                 SizedBox(
-                  height: MediaQuery.of(context).size.height * 0.03,
+                  height: MediaQuery.of(context).size.height * 0.02,
                 ),
                 //แสดง ที่อยู่ของร้าน
                 Align(
                   alignment: Alignment.centerLeft,
                   child: Text(
-                    'ที่อยู่ของร้าน 📍',
+                    'ที่อยู่ของร้าน 📌',
                     style: TextStyle(
                       fontSize: 16,
                       fontWeight: FontWeight.bold,
@@ -190,7 +192,7 @@ class _CakeShopDetailUIState extends State<CakeShopDetailUI> {
                   ),
                 ),
                 SizedBox(
-                  height: MediaQuery.of(context).size.height * 0.03,
+                  height: MediaQuery.of(context).size.height * 0.02,
                 ),
                 //แสดง ปุ่มเบอร์โทร และ โทรได้
                 ElevatedButton(
@@ -200,7 +202,7 @@ class _CakeShopDetailUIState extends State<CakeShopDetailUI> {
                   },
                   child: Text(
                     // widget.cakeShop!.phone!,
-                    ' ${widget.cakeShop!.phone!}',
+                    '📞  ${widget.cakeShop!.phone!}',
                     style: TextStyle(
                       color: Colors.white,
                     ),
@@ -214,7 +216,7 @@ class _CakeShopDetailUIState extends State<CakeShopDetailUI> {
                   ),
                 ),
                 SizedBox(
-                  height: MediaQuery.of(context).size.height * 0.03,
+                  height: MediaQuery.of(context).size.height * 0.02,
                 ),
                 //แสดงเว็บไซต์ และเปิดได้
                 ListTile(
@@ -262,7 +264,59 @@ class _CakeShopDetailUIState extends State<CakeShopDetailUI> {
                 SizedBox(
                   height: MediaQuery.of(context).size.height * 0.02,
                 ),
-                //แสดง map และเปิดได้
+                //แสดง map และเปิดได้ โดยมใช้ flutter map
+                Container(
+                  width: MediaQuery.of(context).size.width,
+                  height: MediaQuery.of(context).size.height * 0.4,
+                  child: FlutterMap(
+                    //กำหนดตำแหน่ง lat/long และ ระยะซูม
+                    options: MapOptions(
+                      initialCenter: LatLng(
+                        double.parse(widget.cakeShop!.latitude!),
+                        double.parse(widget.cakeShop!.longitude!),
+                      ),
+                      initialZoom: 15.0,
+                    ),
+                    //กำหนด layer ที่จะแสดงบนแผนที่ ประกอบด้วย แผนที่ และ maker
+                    children: [
+                      //แผนที่
+                      TileLayer(
+                        urlTemplate:
+                            'https://tile.openstreetmap.org/{z}/{x}/{y}.png',
+                        userAgentPackageName:
+                            'com.sau.flutter_cake_shop_project',
+                      ),
+                      //maker
+                      MarkerLayer(
+                        markers: [
+                          Marker(
+                            point: LatLng(
+                              double.parse(widget.cakeShop!.latitude!),
+                              double.parse(widget.cakeShop!.longitude!),
+                            ),
+                            width: 50,
+                            height: 50,
+                            child: GestureDetector(
+                              onTap: () {
+                                //เปิด google map
+                                _launchInBrowser(
+                                  Uri.parse(
+                                    'https://www.google.com/maps/@${widget.cakeShop!.latitude!},${widget.cakeShop!.longitude!},15.75z',
+                                  ),
+                                );
+                              },
+                              child: FaIcon(
+                                FontAwesomeIcons.locationDot,
+                                color: Colors.red,
+                                size: 40,
+                              ),
+                            ),
+                          ),
+                        ],
+                      ),
+                    ],
+                  ),
+                ),
               ],
             ),
           ),
