@@ -1,6 +1,7 @@
 import 'package:carousel_slider/carousel_slider.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_cake_shop_project/models/cake_shop.dart';
+import 'package:flutter_cake_shop_project/views/cake_shop_detail_ui.dart';
 
 class CakeShopListUI extends StatefulWidget {
   const CakeShopListUI({super.key});
@@ -180,7 +181,18 @@ class _CakeShopListUIState extends State<CakeShopListUI> {
                 ),
                 itemBuilder: (context, index) {
                   return ListTile(
-                    onTap: () {},
+                    onTap: () {
+                      //เปิดไปหน้า cake_shop_detail_ui แบบย้อนกลับได้ โดยจะส่งข้อมูลของร้านไปด้วย
+                      Navigator.push(
+                        context,
+                        MaterialPageRoute(
+                          builder: (context) => CakeShopDetailUI(
+                            //ข้อมูลร้านที่จะส่งไป
+                            cakeShop: cakedata[index],
+                          ),
+                        ),
+                      );
+                    },
                     leading: ClipRRect(
                       borderRadius: BorderRadius.circular(10.0),
                       child: Image.asset(
